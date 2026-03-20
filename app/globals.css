@@ -1,26 +1,205 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@premieroctet/next-admin/theme";
+@source "../node_modules/@premieroctet/next-admin/dist";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+	/* Шрифты */
+	--font-sans: var(--font-nunito), sans-serif;
+
+	/* Цвета из старого проекта (HSL) */
+	--color-border: hsl(var(--border));
+	--color-input: hsl(var(--input));
+	--color-ring: hsl(var(--ring));
+	--color-background: hsl(var(--background));
+	--color-foreground: hsl(var(--foreground));
+
+	--color-primary: hsl(var(--primary));
+	--color-primary-foreground: hsl(var(--primary-foreground));
+
+	--color-primary-dark: hsl(var(--primary-dark));
+
+	--color-secondary: hsl(var(--secondary));
+	--color-secondary-foreground: hsl(var(--secondary-foreground));
+
+	--color-destructive: hsl(var(--destructive));
+	--color-destructive-foreground: hsl(var(--destructive-foreground));
+
+	--color-muted: hsl(var(--muted));
+	--color-muted-foreground: hsl(var(--muted-foreground));
+
+	--color-accent: hsl(var(--accent));
+	--color-accent-foreground: hsl(var(--accent-foreground));
+
+	--color-popover: hsl(var(--popover));
+	--color-popover-foreground: hsl(var(--popover-foreground));
+
+	--color-card: hsl(var(--card));
+	--color-card-foreground: hsl(var(--card-foreground));
+
+	/* Радиусы */
+	--radius: 1rem;
+	--radius-sm: calc(var(--radius) - 0.5rem);
+	--radius-md: calc(var(--radius) - 0.25rem);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 0.25rem);
+	--radius-2xl: calc(var(--radius) + 0.5rem);
+
+	/* Админка */
+	--color-nextadmin-brand-default: var(--color-primary);
+	--color-nextadmin-brand-subtle: var(--color-primary);
+	--color-nextadmin-menu-muted: var(--color-secondary);
+	--color-nextadmin-menu-emphasis: var(--color-primary);
+	--color-nextadmin-background-subtle: var(--color-muted);
+	--color-nextadmin-background-muted: var(--color-secondary);
+	--color-nextadmin-content-emphasis: var(--color-primary);
+	--color-nextadmin-brand-muted: var(--color-secondary);
+	--color-nextadmin-brand-emphasis: var(--color-primary-dark);
+	--color-nextadmin-menu-background: var(--color-muted);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* CSS переменные */
+:root {
+	--foreground: 20 14.3% 4.1%;
+	--background: 0 0% 100%;
+
+	--card: 0 0% 100%;
+	--card-foreground: 20 14.3% 4.1%;
+
+	--popover: 0 0% 100%;
+	--popover-foreground: 20 14.3% 4.1%;
+
+	--primary: 22 100% 50%; /* Оранжевый цвет! */
+	--primary-foreground: 60 9.1% 97.8%;
+
+	--primary-dark: 22 100% 45%;
+
+	--secondary: 32 100% 98%;
+	--secondary-foreground: 24 9.8% 10%;
+
+	--muted: 60 4.8% 95.9%;
+	--muted-foreground: 25 5.3% 44.7%;
+
+	--accent: 60 4.8% 95.9%;
+	--accent-foreground: 24 9.8% 10%;
+
+	--destructive: 0 84.2% 60.2%;
+	--destructive-foreground: 60 9.1% 97.8%;
+
+	--border: 20 5.9% 90%;
+	--input: 0 0% 90%;
+	--ring: 24.6 95% 53.1%;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Темная тема */
+.dark {
+	--background: 20 14.3% 4.1%;
+	--foreground: 60 9.1% 97.8%;
+
+	--card: 20 14.3% 4.1%;
+	--card-foreground: 60 9.1% 97.8%;
+
+	--popover: 20 14.3% 4.1%;
+	--popover-foreground: 60 9.1% 97.8%;
+
+	--primary: 22 100% 50%;
+	--primary-foreground: 60 9.1% 97.8%;
+
+	--secondary: 12 6.5% 15.1%;
+	--secondary-foreground: 60 9.1% 97.8%;
+
+	--muted: 12 6.5% 15.1%;
+	--muted-foreground: 24 5.4% 63.9%;
+
+	--accent: 12 6.5% 15.1%;
+	--accent-foreground: 60 9.1% 97.8%;
+
+	--destructive: 0 62.8% 30.6%;
+	--destructive-foreground: 60 9.1% 97.8%;
+
+	--border: 12 6.5% 15.1%;
+	--input: 12 6.5% 15.1%;
+	--ring: 22 100% 50%;
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+@media screen and (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+}
+
+* {
+	font-family: var(--font-nunito), sans-serif;
+}
+
+@layer utilities {
+	.text-balance {
+		text-wrap: balance;
+	}
+
+	.scrollbar::-webkit-scrollbar {
+		width: 4px;
+	}
+
+	.scrollbar::-webkit-scrollbar-track {
+		border-radius: 6px;
+		background: #fff;
+	}
+
+	.scrollbar::-webkit-scrollbar-thumb {
+		background: #dbdadd;
+		border-radius: 6px;
+	}
+
+	.scrollbar::-webkit-scrollbar-thumb:hover {
+		background: #dbdadd;
+	}
+}
+
+@layer base {
+	* {
+		border-color: hsl(var(--border));
+	}
+
+	body {
+		background-color: hsl(var(--background));
+		color: hsl(var(--foreground));
+	}
+}
+
+#nprogress .bar {
+	background: var(--color-primary) !important;
+}
+
+#nprogress .peg {
+	box-shadow:
+		0 0 10px var(--color-primary),
+		0 0 5px var(--color-primary) !important;
+}
+
+#nprogress .spinner-icon {
+	border-top-color: var(--color-primary) !important;
+	border-left-color: var(--color-primary) !important;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+	display: none;
+}
+
+.scrollbar-hide {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
+
+.next-admin__root,
+.next-admin__root .bg-nextadmin-menu-background,
+#headlessui-portal-root div[id*="headlessui-dialog-panel"]:has(.bg-nextadmin-menu-background) {
+	margin-top: 50px;
 }
