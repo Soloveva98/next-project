@@ -15,13 +15,11 @@ export default async function Layout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en">
+		<html lang="ru" className="light" style={{ colorScheme: "light" }}>
 			<head>
 				<link data-rh="true" rel="icon" href="/logo.png" />
 			</head>
-			<body
-				className={nunito.variable}
-			>
+			<body className={nunito.variable}>
 				<Providers>{children}</Providers>
 			</body>
 		</html>

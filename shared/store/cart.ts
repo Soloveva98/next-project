@@ -12,7 +12,6 @@ export interface CartState {
 
 	fetchCartItems: () => Promise<void>;
 	updateItemQuantity: (id: number, quantity: number) => Promise<void>;
-	// TODO: типипзировать values
 	addCartItem: (values: CreateCartItemValues) => Promise<void>;
 	removeCartItem: (id: number) => Promise<void>;
 }

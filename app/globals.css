@@ -197,9 +197,3 @@ html {
 	-ms-overflow-style: none;
 	scrollbar-width: none;
 }
-
-.next-admin__root,
-.next-admin__root .bg-nextadmin-menu-background,
-#headlessui-portal-root div[id*="headlessui-dialog-panel"]:has(.bg-nextadmin-menu-background) {
-	margin-top: 50px;
-}
