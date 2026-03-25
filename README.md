@@ -1,5 +1,7 @@
 # Адаптивный интернет-магазин пиццерии на Next.js и TypeScript с административной панелью
 
+### Ссылка на сайт: <a href="https://next-project-ochre-eta.vercel.app/">Next Pizza</a>
+
 #### :hammer_and_wrench: Стек технологий:
 <a href="https://nextjs.org" target="_blank" rel="noreferrer">
    <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/nextjs.svg" width="36" height="36" alt="NextJS" />
