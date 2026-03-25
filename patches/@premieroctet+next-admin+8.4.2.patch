@@ -1,5 +1,5 @@
 diff --git a/node_modules/@premieroctet/next-admin/dist/handlers/resources.mjs b/node_modules/@premieroctet/next-admin/dist/handlers/resources.mjs
-index b5023ae..7162abd 100644
+index b5023ae..526f90e 100644
 --- a/node_modules/@premieroctet/next-admin/dist/handlers/resources.mjs
 +++ b/node_modules/@premieroctet/next-admin/dist/handlers/resources.mjs
 @@ -1,4 +1,4 @@
@@ -8,15 +8,6 @@ index b5023ae..7162abd 100644
  import { Permission } from "../types.mjs";
  import { hasPermission } from "../utils/permissions.mjs";
  import { getDataItem } from "../utils/prisma.mjs";
-@@ -15,7 +15,7 @@ const deleteResource = async ({ prisma, resource, body, modelOptions })=>{
-                 }
-             }
-         });
--        const middlewareExec = await Promise.allSettled(resources.map(async (res)=>{
-+        const middlewareExec = await Promise.allSettsled(resources.map(async (res)=>{
-             const isSuccessDelete = await modelOptions?.middlewares?.delete?.(res);
-             return isSuccessDelete;
-         }));
 diff --git a/node_modules/@premieroctet/next-admin/dist/schema.cjs b/node_modules/@premieroctet/next-admin/dist/schema.cjs
 new file mode 100644
 index 0000000..1c852d2
