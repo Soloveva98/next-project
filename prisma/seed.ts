@@ -337,8 +337,8 @@ async function down() {
 
 async function main() {
 	try {
-		await down();
-		await up();
+		// await down();
+		// await up();
 	} catch (error) {
 		console.error(error);
 	}

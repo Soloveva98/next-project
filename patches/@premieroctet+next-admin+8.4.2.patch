@@ -1,0 +1,2589 @@
+diff --git a/node_modules/@premieroctet/next-admin/dist/handlers/resources.mjs b/node_modules/@premieroctet/next-admin/dist/handlers/resources.mjs
+index b5023ae..7162abd 100644
+--- a/node_modules/@premieroctet/next-admin/dist/handlers/resources.mjs
++++ b/node_modules/@premieroctet/next-admin/dist/handlers/resources.mjs
+@@ -1,4 +1,4 @@
+-import { PrismaClientKnownRequestError, PrismaClientValidationError } from "@prisma/client/runtime/library";
++import { PrismaClientKnownRequestError, PrismaClientValidationError } from "@prisma/client";
+ import { Permission } from "../types.mjs";
+ import { hasPermission } from "../utils/permissions.mjs";
+ import { getDataItem } from "../utils/prisma.mjs";
+@@ -15,7 +15,7 @@ const deleteResource = async ({ prisma, resource, body, modelOptions })=>{
+                 }
+             }
+         });
+-        const middlewareExec = await Promise.allSettled(resources.map(async (res)=>{
++        const middlewareExec = await Promise.allSettsled(resources.map(async (res)=>{
+             const isSuccessDelete = await modelOptions?.middlewares?.delete?.(res);
+             return isSuccessDelete;
+         }));
+diff --git a/node_modules/@premieroctet/next-admin/dist/schema.cjs b/node_modules/@premieroctet/next-admin/dist/schema.cjs
+new file mode 100644
+index 0000000..1c852d2
+--- /dev/null
++++ b/node_modules/@premieroctet/next-admin/dist/schema.cjs
+@@ -0,0 +1,1278 @@
++module.exports = {
++  "$schema": "http://json-schema.org/draft-07/schema#",
++  "definitions": {
++    "User": {
++      "type": "object",
++      "properties": {
++        "id": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": true,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "fullName": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "email": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "password": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "role": {
++          "type": "string",
++          "default": "USER",
++          "enum": [
++            "USER",
++            "ADMIN"
++          ],
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "enum",
++            "type": "UserRole",
++            "disabled": false,
++            "required": true,
++            "isList": false,
++            "enum": {
++              "$ref": "#/definitions/UserRole"
++            }
++          }
++        },
++        "provider": {
++          "type": [
++            "string",
++            "null"
++          ],
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": false,
++            "isList": false
++          }
++        },
++        "providerId": {
++          "type": [
++            "string",
++            "null"
++          ],
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": false,
++            "isList": false
++          }
++        },
++        "cart": {
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "Cart",
++            "disabled": false,
++            "required": false,
++            "isList": false,
++            "relation": {
++              "$ref": "#/definitions/Cart",
++              "fromField": "user",
++              "toField": "cart"
++            }
++          }
++        },
++        "orders": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/Order"
++          },
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "Order",
++            "disabled": false,
++            "required": true,
++            "isList": true,
++            "relation": {
++              "$ref": "#/definitions/Order",
++              "fromField": "user",
++              "toField": "orders"
++            }
++          }
++        },
++        "verified": {
++          "type": [
++            "string",
++            "null"
++          ],
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": false,
++            "required": false,
++            "isList": false
++          }
++        },
++        "verificationCode": {
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "VerificationCode",
++            "disabled": false,
++            "required": false,
++            "isList": false,
++            "relation": {
++              "$ref": "#/definitions/VerificationCode",
++              "fromField": "user",
++              "toField": "verificationCode"
++            }
++          }
++        },
++        "createdAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "updatedAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        }
++      },
++      "required": [
++        "fullName",
++        "email",
++        "password",
++        "updatedAt"
++      ]
++    },
++    "Category": {
++      "type": "object",
++      "properties": {
++        "id": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": true,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "name": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "products": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/Product"
++          },
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "Product",
++            "disabled": false,
++            "required": true,
++            "isList": true,
++            "relation": {
++              "$ref": "#/definitions/Product",
++              "fromField": "category",
++              "toField": "products"
++            }
++          }
++        },
++        "createdAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "updatedAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        }
++      },
++      "required": [
++        "name",
++        "updatedAt"
++      ]
++    },
++    "Product": {
++      "type": "object",
++      "properties": {
++        "id": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": true,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "name": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "imageUrl": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "category": {
++          "$ref": "#/definitions/Category",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "Category",
++            "disabled": false,
++            "required": true,
++            "isList": false,
++            "relation": {
++              "$ref": "#/definitions/Category",
++              "fromField": "products",
++              "fromFieldDbName": "categoryId",
++              "toField": "category",
++              "toFieldDbName": "id"
++            }
++          }
++        },
++        "ingredients": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/Ingredient"
++          },
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "Ingredient",
++            "disabled": false,
++            "required": true,
++            "isList": true,
++            "relation": {
++              "$ref": "#/definitions/Ingredient",
++              "fromField": "products",
++              "toField": "ingredients"
++            }
++          }
++        },
++        "variants": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/ProductVariant"
++          },
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "ProductVariant",
++            "disabled": false,
++            "required": true,
++            "isList": true,
++            "relation": {
++              "$ref": "#/definitions/ProductVariant",
++              "fromField": "product",
++              "toField": "variants"
++            }
++          }
++        },
++        "createdAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "updatedAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        }
++      },
++      "required": [
++        "name",
++        "imageUrl",
++        "categoryId",
++        "updatedAt"
++      ]
++    },
++    "ProductVariant": {
++      "type": "object",
++      "properties": {
++        "id": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": true,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "price": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "size": {
++          "type": [
++            "integer",
++            "null"
++          ],
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": false,
++            "required": false,
++            "isList": false
++          }
++        },
++        "pizzaType": {
++          "type": [
++            "integer",
++            "null"
++          ],
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": false,
++            "required": false,
++            "isList": false
++          }
++        },
++        "cartItems": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/CartItem"
++          },
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "CartItem",
++            "disabled": false,
++            "required": true,
++            "isList": true,
++            "relation": {
++              "$ref": "#/definitions/CartItem",
++              "fromField": "productItem",
++              "toField": "cartItems"
++            }
++          }
++        },
++        "product": {
++          "$ref": "#/definitions/Product",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "Product",
++            "disabled": false,
++            "required": true,
++            "isList": false,
++            "relation": {
++              "$ref": "#/definitions/Product",
++              "fromField": "variants",
++              "fromFieldDbName": "productId",
++              "toField": "product",
++              "toFieldDbName": "id"
++            }
++          }
++        },
++        "createdAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "updatedAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        }
++      },
++      "required": [
++        "price",
++        "productId",
++        "updatedAt"
++      ]
++    },
++    "Ingredient": {
++      "type": "object",
++      "properties": {
++        "id": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": true,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "name": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "price": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "imageUrl": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "products": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/Product"
++          },
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "Product",
++            "disabled": false,
++            "required": true,
++            "isList": true,
++            "relation": {
++              "$ref": "#/definitions/Product",
++              "fromField": "ingredients",
++              "toField": "products"
++            }
++          }
++        },
++        "cartItems": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/CartItem"
++          },
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "CartItem",
++            "disabled": false,
++            "required": true,
++            "isList": true,
++            "relation": {
++              "$ref": "#/definitions/CartItem",
++              "fromField": "ingredients",
++              "toField": "cartItems"
++            }
++          }
++        },
++        "createdAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "updatedAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        }
++      },
++      "required": [
++        "name",
++        "price",
++        "imageUrl",
++        "updatedAt"
++      ]
++    },
++    "Cart": {
++      "type": "object",
++      "properties": {
++        "id": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": true,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "user": {
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "User",
++            "disabled": false,
++            "required": false,
++            "isList": false,
++            "relation": {
++              "$ref": "#/definitions/User",
++              "fromField": "cart",
++              "fromFieldDbName": "userId",
++              "toField": "user",
++              "toFieldDbName": "id"
++            }
++          }
++        },
++        "items": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/CartItem"
++          },
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "CartItem",
++            "disabled": false,
++            "required": true,
++            "isList": true,
++            "relation": {
++              "$ref": "#/definitions/CartItem",
++              "fromField": "cart",
++              "toField": "items"
++            }
++          }
++        },
++        "token": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "totalAmount": {
++          "type": "integer",
++          "default": 0,
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "createdAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "updatedAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        }
++      },
++      "required": [
++        "token",
++        "updatedAt"
++      ]
++    },
++    "CartItem": {
++      "type": "object",
++      "properties": {
++        "id": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": true,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "cart": {
++          "$ref": "#/definitions/Cart",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "Cart",
++            "disabled": false,
++            "required": true,
++            "isList": false,
++            "relation": {
++              "$ref": "#/definitions/Cart",
++              "fromField": "items",
++              "fromFieldDbName": "cartId",
++              "toField": "cart",
++              "toFieldDbName": "id"
++            }
++          }
++        },
++        "productItem": {
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "ProductVariant",
++            "disabled": false,
++            "required": false,
++            "isList": false,
++            "relation": {
++              "$ref": "#/definitions/ProductVariant",
++              "fromField": "cartItems",
++              "fromFieldDbName": "productItemId",
++              "toField": "productItem",
++              "toFieldDbName": "id"
++            }
++          }
++        },
++        "quantity": {
++          "type": "integer",
++          "default": 1,
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "ingredients": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/Ingredient"
++          },
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "Ingredient",
++            "disabled": false,
++            "required": true,
++            "isList": true,
++            "relation": {
++              "$ref": "#/definitions/Ingredient",
++              "fromField": "cartItems",
++              "toField": "ingredients"
++            }
++          }
++        },
++        "createdAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "updatedAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        }
++      },
++      "required": [
++        "cartId",
++        "productItemId",
++        "updatedAt"
++      ]
++    },
++    "Order": {
++      "type": "object",
++      "properties": {
++        "id": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": true,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "user": {
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "User",
++            "disabled": false,
++            "required": false,
++            "isList": false,
++            "relation": {
++              "$ref": "#/definitions/User",
++              "fromField": "orders",
++              "fromFieldDbName": "userId",
++              "toField": "user",
++              "toFieldDbName": "id"
++            }
++          }
++        },
++        "token": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "totalAmount": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "status": {
++          "type": "string",
++          "enum": [
++            "PENDING",
++            "SUCCEEDED",
++            "CANCELLED"
++          ],
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "enum",
++            "type": "OrderStatus",
++            "disabled": false,
++            "required": true,
++            "isList": false,
++            "enum": {
++              "$ref": "#/definitions/OrderStatus"
++            }
++          }
++        },
++        "paymentId": {
++          "type": [
++            "string",
++            "null"
++          ],
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": false,
++            "isList": false
++          }
++        },
++        "items": {
++          "type": [
++            "number",
++            "string",
++            "boolean",
++            "object",
++            "array",
++            "null"
++          ],
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "Json",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "fullName": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "address": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "email": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "phone": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "comment": {
++          "type": [
++            "string",
++            "null"
++          ],
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": false,
++            "isList": false
++          }
++        },
++        "createdAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "updatedAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        }
++      },
++      "required": [
++        "token",
++        "totalAmount",
++        "status",
++        "items",
++        "fullName",
++        "address",
++        "email",
++        "phone",
++        "updatedAt"
++      ]
++    },
++    "VerificationCode": {
++      "type": "object",
++      "properties": {
++        "id": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": true,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "user": {
++          "$ref": "#/definitions/User",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "User",
++            "disabled": false,
++            "required": true,
++            "isList": false,
++            "relation": {
++              "$ref": "#/definitions/User",
++              "fromField": "verificationCode",
++              "fromFieldDbName": "userId",
++              "toField": "user",
++              "toFieldDbName": "id"
++            }
++          }
++        },
++        "code": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "createdAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        }
++      },
++      "required": [
++        "userId",
++        "code"
++      ]
++    },
++    "Story": {
++      "type": "object",
++      "properties": {
++        "id": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": true,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "previewImageUrl": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "items": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/StoryItem"
++          },
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "StoryItem",
++            "disabled": false,
++            "required": true,
++            "isList": true,
++            "relation": {
++              "$ref": "#/definitions/StoryItem",
++              "fromField": "story",
++              "toField": "items"
++            }
++          }
++        },
++        "createdAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        }
++      },
++      "required": [
++        "previewImageUrl"
++      ]
++    },
++    "StoryItem": {
++      "type": "object",
++      "properties": {
++        "id": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": true,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "story": {
++          "$ref": "#/definitions/Story",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "Story",
++            "disabled": false,
++            "required": true,
++            "isList": false,
++            "relation": {
++              "$ref": "#/definitions/Story",
++              "fromField": "items",
++              "fromFieldDbName": "storyId",
++              "toField": "story",
++              "toFieldDbName": "id"
++            }
++          }
++        },
++        "sourceUrl": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "createdAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        }
++      },
++      "required": [
++        "storyId",
++        "sourceUrl"
++      ]
++    },
++    "OrderStatus": {
++      "type": "string",
++      "enum": [
++        "PENDING",
++        "SUCCEEDED",
++        "CANCELLED"
++      ]
++    },
++    "UserRole": {
++      "type": "string",
++      "enum": [
++        "USER",
++        "ADMIN"
++      ]
++    }
++  },
++  "type": "object",
++  "properties": {
++    "user": {
++      "$ref": "#/definitions/User"
++    },
++    "category": {
++      "$ref": "#/definitions/Category"
++    },
++    "product": {
++      "$ref": "#/definitions/Product"
++    },
++    "productVariant": {
++      "$ref": "#/definitions/ProductVariant"
++    },
++    "ingredient": {
++      "$ref": "#/definitions/Ingredient"
++    },
++    "cart": {
++      "$ref": "#/definitions/Cart"
++    },
++    "cartItem": {
++      "$ref": "#/definitions/CartItem"
++    },
++    "order": {
++      "$ref": "#/definitions/Order"
++    },
++    "verificationCode": {
++      "$ref": "#/definitions/VerificationCode"
++    },
++    "story": {
++      "$ref": "#/definitions/Story"
++    },
++    "storyItem": {
++      "$ref": "#/definitions/StoryItem"
++    }
++  }
++}
+\ No newline at end of file
+diff --git a/node_modules/@premieroctet/next-admin/dist/schema.mjs b/node_modules/@premieroctet/next-admin/dist/schema.mjs
+new file mode 100644
+index 0000000..83665c4
+--- /dev/null
++++ b/node_modules/@premieroctet/next-admin/dist/schema.mjs
+@@ -0,0 +1,1278 @@
++export default {
++  "$schema": "http://json-schema.org/draft-07/schema#",
++  "definitions": {
++    "User": {
++      "type": "object",
++      "properties": {
++        "id": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": true,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "fullName": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "email": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "password": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "role": {
++          "type": "string",
++          "default": "USER",
++          "enum": [
++            "USER",
++            "ADMIN"
++          ],
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "enum",
++            "type": "UserRole",
++            "disabled": false,
++            "required": true,
++            "isList": false,
++            "enum": {
++              "$ref": "#/definitions/UserRole"
++            }
++          }
++        },
++        "provider": {
++          "type": [
++            "string",
++            "null"
++          ],
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": false,
++            "isList": false
++          }
++        },
++        "providerId": {
++          "type": [
++            "string",
++            "null"
++          ],
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": false,
++            "isList": false
++          }
++        },
++        "cart": {
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "Cart",
++            "disabled": false,
++            "required": false,
++            "isList": false,
++            "relation": {
++              "$ref": "#/definitions/Cart",
++              "fromField": "user",
++              "toField": "cart"
++            }
++          }
++        },
++        "orders": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/Order"
++          },
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "Order",
++            "disabled": false,
++            "required": true,
++            "isList": true,
++            "relation": {
++              "$ref": "#/definitions/Order",
++              "fromField": "user",
++              "toField": "orders"
++            }
++          }
++        },
++        "verified": {
++          "type": [
++            "string",
++            "null"
++          ],
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": false,
++            "required": false,
++            "isList": false
++          }
++        },
++        "verificationCode": {
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "VerificationCode",
++            "disabled": false,
++            "required": false,
++            "isList": false,
++            "relation": {
++              "$ref": "#/definitions/VerificationCode",
++              "fromField": "user",
++              "toField": "verificationCode"
++            }
++          }
++        },
++        "createdAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "updatedAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        }
++      },
++      "required": [
++        "fullName",
++        "email",
++        "password",
++        "updatedAt"
++      ]
++    },
++    "Category": {
++      "type": "object",
++      "properties": {
++        "id": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": true,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "name": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "products": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/Product"
++          },
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "Product",
++            "disabled": false,
++            "required": true,
++            "isList": true,
++            "relation": {
++              "$ref": "#/definitions/Product",
++              "fromField": "category",
++              "toField": "products"
++            }
++          }
++        },
++        "createdAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "updatedAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        }
++      },
++      "required": [
++        "name",
++        "updatedAt"
++      ]
++    },
++    "Product": {
++      "type": "object",
++      "properties": {
++        "id": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": true,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "name": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "imageUrl": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "category": {
++          "$ref": "#/definitions/Category",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "Category",
++            "disabled": false,
++            "required": true,
++            "isList": false,
++            "relation": {
++              "$ref": "#/definitions/Category",
++              "fromField": "products",
++              "fromFieldDbName": "categoryId",
++              "toField": "category",
++              "toFieldDbName": "id"
++            }
++          }
++        },
++        "ingredients": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/Ingredient"
++          },
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "Ingredient",
++            "disabled": false,
++            "required": true,
++            "isList": true,
++            "relation": {
++              "$ref": "#/definitions/Ingredient",
++              "fromField": "products",
++              "toField": "ingredients"
++            }
++          }
++        },
++        "variants": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/ProductVariant"
++          },
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "ProductVariant",
++            "disabled": false,
++            "required": true,
++            "isList": true,
++            "relation": {
++              "$ref": "#/definitions/ProductVariant",
++              "fromField": "product",
++              "toField": "variants"
++            }
++          }
++        },
++        "createdAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "updatedAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        }
++      },
++      "required": [
++        "name",
++        "imageUrl",
++        "categoryId",
++        "updatedAt"
++      ]
++    },
++    "ProductVariant": {
++      "type": "object",
++      "properties": {
++        "id": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": true,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "price": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "size": {
++          "type": [
++            "integer",
++            "null"
++          ],
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": false,
++            "required": false,
++            "isList": false
++          }
++        },
++        "pizzaType": {
++          "type": [
++            "integer",
++            "null"
++          ],
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": false,
++            "required": false,
++            "isList": false
++          }
++        },
++        "cartItems": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/CartItem"
++          },
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "CartItem",
++            "disabled": false,
++            "required": true,
++            "isList": true,
++            "relation": {
++              "$ref": "#/definitions/CartItem",
++              "fromField": "productItem",
++              "toField": "cartItems"
++            }
++          }
++        },
++        "product": {
++          "$ref": "#/definitions/Product",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "Product",
++            "disabled": false,
++            "required": true,
++            "isList": false,
++            "relation": {
++              "$ref": "#/definitions/Product",
++              "fromField": "variants",
++              "fromFieldDbName": "productId",
++              "toField": "product",
++              "toFieldDbName": "id"
++            }
++          }
++        },
++        "createdAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "updatedAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        }
++      },
++      "required": [
++        "price",
++        "productId",
++        "updatedAt"
++      ]
++    },
++    "Ingredient": {
++      "type": "object",
++      "properties": {
++        "id": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": true,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "name": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "price": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "imageUrl": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "products": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/Product"
++          },
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "Product",
++            "disabled": false,
++            "required": true,
++            "isList": true,
++            "relation": {
++              "$ref": "#/definitions/Product",
++              "fromField": "ingredients",
++              "toField": "products"
++            }
++          }
++        },
++        "cartItems": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/CartItem"
++          },
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "CartItem",
++            "disabled": false,
++            "required": true,
++            "isList": true,
++            "relation": {
++              "$ref": "#/definitions/CartItem",
++              "fromField": "ingredients",
++              "toField": "cartItems"
++            }
++          }
++        },
++        "createdAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "updatedAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        }
++      },
++      "required": [
++        "name",
++        "price",
++        "imageUrl",
++        "updatedAt"
++      ]
++    },
++    "Cart": {
++      "type": "object",
++      "properties": {
++        "id": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": true,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "user": {
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "User",
++            "disabled": false,
++            "required": false,
++            "isList": false,
++            "relation": {
++              "$ref": "#/definitions/User",
++              "fromField": "cart",
++              "fromFieldDbName": "userId",
++              "toField": "user",
++              "toFieldDbName": "id"
++            }
++          }
++        },
++        "items": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/CartItem"
++          },
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "CartItem",
++            "disabled": false,
++            "required": true,
++            "isList": true,
++            "relation": {
++              "$ref": "#/definitions/CartItem",
++              "fromField": "cart",
++              "toField": "items"
++            }
++          }
++        },
++        "token": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "totalAmount": {
++          "type": "integer",
++          "default": 0,
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "createdAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "updatedAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        }
++      },
++      "required": [
++        "token",
++        "updatedAt"
++      ]
++    },
++    "CartItem": {
++      "type": "object",
++      "properties": {
++        "id": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": true,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "cart": {
++          "$ref": "#/definitions/Cart",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "Cart",
++            "disabled": false,
++            "required": true,
++            "isList": false,
++            "relation": {
++              "$ref": "#/definitions/Cart",
++              "fromField": "items",
++              "fromFieldDbName": "cartId",
++              "toField": "cart",
++              "toFieldDbName": "id"
++            }
++          }
++        },
++        "productItem": {
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "ProductVariant",
++            "disabled": false,
++            "required": false,
++            "isList": false,
++            "relation": {
++              "$ref": "#/definitions/ProductVariant",
++              "fromField": "cartItems",
++              "fromFieldDbName": "productItemId",
++              "toField": "productItem",
++              "toFieldDbName": "id"
++            }
++          }
++        },
++        "quantity": {
++          "type": "integer",
++          "default": 1,
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "ingredients": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/Ingredient"
++          },
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "Ingredient",
++            "disabled": false,
++            "required": true,
++            "isList": true,
++            "relation": {
++              "$ref": "#/definitions/Ingredient",
++              "fromField": "cartItems",
++              "toField": "ingredients"
++            }
++          }
++        },
++        "createdAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "updatedAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        }
++      },
++      "required": [
++        "cartId",
++        "productItemId",
++        "updatedAt"
++      ]
++    },
++    "Order": {
++      "type": "object",
++      "properties": {
++        "id": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": true,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "user": {
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "User",
++            "disabled": false,
++            "required": false,
++            "isList": false,
++            "relation": {
++              "$ref": "#/definitions/User",
++              "fromField": "orders",
++              "fromFieldDbName": "userId",
++              "toField": "user",
++              "toFieldDbName": "id"
++            }
++          }
++        },
++        "token": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "totalAmount": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "status": {
++          "type": "string",
++          "enum": [
++            "PENDING",
++            "SUCCEEDED",
++            "CANCELLED"
++          ],
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "enum",
++            "type": "OrderStatus",
++            "disabled": false,
++            "required": true,
++            "isList": false,
++            "enum": {
++              "$ref": "#/definitions/OrderStatus"
++            }
++          }
++        },
++        "paymentId": {
++          "type": [
++            "string",
++            "null"
++          ],
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": false,
++            "isList": false
++          }
++        },
++        "items": {
++          "type": [
++            "number",
++            "string",
++            "boolean",
++            "object",
++            "array",
++            "null"
++          ],
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "Json",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "fullName": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "address": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "email": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "phone": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "comment": {
++          "type": [
++            "string",
++            "null"
++          ],
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": false,
++            "isList": false
++          }
++        },
++        "createdAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "updatedAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        }
++      },
++      "required": [
++        "token",
++        "totalAmount",
++        "status",
++        "items",
++        "fullName",
++        "address",
++        "email",
++        "phone",
++        "updatedAt"
++      ]
++    },
++    "VerificationCode": {
++      "type": "object",
++      "properties": {
++        "id": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": true,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "user": {
++          "$ref": "#/definitions/User",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "User",
++            "disabled": false,
++            "required": true,
++            "isList": false,
++            "relation": {
++              "$ref": "#/definitions/User",
++              "fromField": "verificationCode",
++              "fromFieldDbName": "userId",
++              "toField": "user",
++              "toFieldDbName": "id"
++            }
++          }
++        },
++        "code": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "createdAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        }
++      },
++      "required": [
++        "userId",
++        "code"
++      ]
++    },
++    "Story": {
++      "type": "object",
++      "properties": {
++        "id": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": true,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "previewImageUrl": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "items": {
++          "type": "array",
++          "items": {
++            "$ref": "#/definitions/StoryItem"
++          },
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "StoryItem",
++            "disabled": false,
++            "required": true,
++            "isList": true,
++            "relation": {
++              "$ref": "#/definitions/StoryItem",
++              "fromField": "story",
++              "toField": "items"
++            }
++          }
++        },
++        "createdAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        }
++      },
++      "required": [
++        "previewImageUrl"
++      ]
++    },
++    "StoryItem": {
++      "type": "object",
++      "properties": {
++        "id": {
++          "type": "integer",
++          "__nextadmin": {
++            "primaryKey": true,
++            "kind": "scalar",
++            "type": "Int",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        },
++        "story": {
++          "$ref": "#/definitions/Story",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "object",
++            "type": "Story",
++            "disabled": false,
++            "required": true,
++            "isList": false,
++            "relation": {
++              "$ref": "#/definitions/Story",
++              "fromField": "items",
++              "fromFieldDbName": "storyId",
++              "toField": "story",
++              "toFieldDbName": "id"
++            }
++          }
++        },
++        "sourceUrl": {
++          "type": "string",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "String",
++            "disabled": false,
++            "required": true,
++            "isList": false
++          }
++        },
++        "createdAt": {
++          "type": "string",
++          "format": "date-time",
++          "__nextadmin": {
++            "primaryKey": false,
++            "kind": "scalar",
++            "type": "DateTime",
++            "disabled": true,
++            "required": true,
++            "isList": false
++          }
++        }
++      },
++      "required": [
++        "storyId",
++        "sourceUrl"
++      ]
++    },
++    "OrderStatus": {
++      "type": "string",
++      "enum": [
++        "PENDING",
++        "SUCCEEDED",
++        "CANCELLED"
++      ]
++    },
++    "UserRole": {
++      "type": "string",
++      "enum": [
++        "USER",
++        "ADMIN"
++      ]
++    }
++  },
++  "type": "object",
++  "properties": {
++    "user": {
++      "$ref": "#/definitions/User"
++    },
++    "category": {
++      "$ref": "#/definitions/Category"
++    },
++    "product": {
++      "$ref": "#/definitions/Product"
++    },
++    "productVariant": {
++      "$ref": "#/definitions/ProductVariant"
++    },
++    "ingredient": {
++      "$ref": "#/definitions/Ingredient"
++    },
++    "cart": {
++      "$ref": "#/definitions/Cart"
++    },
++    "cartItem": {
++      "$ref": "#/definitions/CartItem"
++    },
++    "order": {
++      "$ref": "#/definitions/Order"
++    },
++    "verificationCode": {
++      "$ref": "#/definitions/VerificationCode"
++    },
++    "story": {
++      "$ref": "#/definitions/Story"
++    },
++    "storyItem": {
++      "$ref": "#/definitions/StoryItem"
++    }
++  }
++}
+\ No newline at end of file
