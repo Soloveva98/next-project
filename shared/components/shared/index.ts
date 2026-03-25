@@ -32,7 +32,6 @@ export { InfoBlock } from "./info-block";
 export { ProfileForm } from "./profile-form";
 export { ProfileImage } from "./profile-image";
 export { Stories } from "./stories";
-export { Footer } from "./footer";
 export { AdministrationBar } from "./administration-bar";
 
 export * from "./modals";

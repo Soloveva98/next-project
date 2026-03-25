@@ -4,7 +4,6 @@ import {
 	Filters,
 	ProductsGroupList,
 	Stories,
-	Footer,
 } from "@/components/index";
 import { Suspense } from "react";
 import { findPizzas, GetSearchParams } from "@/shared/utils/find-pizzas";
@@ -53,8 +52,6 @@ export default async function Home({
 					</div>
 				</div>
 			</Container>
-
-			<Footer className="mt-10" />
 		</div>
 	);
 }
